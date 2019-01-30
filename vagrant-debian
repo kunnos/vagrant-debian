@@ -21,10 +21,6 @@ function get-current-debian-version {
 argv=($@)
 
 case ${argv[0]} in
-    32)
-        ARCH="i386"
-        OS_TYPE="Debian"
-    ;;
     64)
         ARCH="amd64"
         OS_TYPE="Debian_64"
@@ -41,10 +37,6 @@ case "$RELEASE_SPECIFIER" in
         VERSION_NUMBER=$(get-current-debian-version)
         MIRROR_DIR="release/${VERSION_NUMBER}"
     ;;
-    "testing")
-        VERSION="testing"
-        MIRROR_DIR="weekly-builds"
-    ;;
     *.*.*)
         VERSION="${RELEASE_SPECIFIER}"
         MIRROR_DIR="archive/${VERSION}"
@@ -54,7 +46,7 @@ case "$RELEASE_SPECIFIER" in
     ;;
 esac
 
-BOX="debian-${VERSION}-${ARCH}"
+BOX="debian-${ARCH}"
 
 VERSION_NUMBER="${VERSION_NUMBER:-$VERSION}"
 
@@ -171,7 +163,7 @@ function customize_iso {
 
 function vbox_unregister {
     if VBoxManage showvminfo "${BOX}" >/dev/null 2>/dev/null; then
-        read -p "${txtred}Are you sure you want to destroy ${BOX}? ${txtrst}"
+        read -p "${txtred}Are you sure you want to destroy ${BOX} [y/n]? ${txtrst}"
         if [ "$REPLY" == "y" ]; then
             VBoxManage unregistervm "${BOX}" --delete > /dev/null
             if [ $? -ne 0 ]; then
